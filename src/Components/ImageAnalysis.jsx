@@ -1,3 +1,4 @@
+// src/components/ImageAnalysis.jsx
 import { useState, useRef } from 'react';
 import { Camera, Upload, Loader2, Leaf } from 'lucide-react';
 
@@ -6,25 +7,24 @@ export default function ImageAnalysis() {
   const [preview, setPreview] = useState(null);
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [language, setLanguage] = useState('en'); // Default to English
+  const [language, setLanguage] = useState('en');
   const fileInputRef = useRef();
   const videoRef = useRef();
   const [showCamera, setShowCamera] = useState(false);
 
-  // Supported local languages (customize as needed)
+  // Supported languages (customize as needed)
   const languages = [
     { code: 'en', name: 'English' },
-    { code: 'hi', name: 'Hindi' },
-    { code: 'mr', name: 'Marathi' },
-    { code: 'ta', name: 'Tamil' },
-    // Add more languages as needed
+    { code: 'hi', name: 'हिंदी' },
+    { code: 'ta', name: 'தமிழ்' },
+    // Add more languages
   ];
 
   const handleImageUpload = async (file) => {
     setImage(file);
     setPreview(URL.createObjectURL(file));
     setIsLoading(true);
-    
+
     try {
       const formData = new FormData();
       formData.append('image', file);
@@ -34,6 +34,10 @@ export default function ImageAnalysis() {
         method: 'POST',
         body: formData,
       });
+
+      if (!response.ok) {
+        throw new Error('Analysis failed');
+      }
 
       const data = await response.json();
       setResults(data);
@@ -51,7 +55,7 @@ export default function ImageAnalysis() {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       videoRef.current.srcObject = stream;
     } catch (err) {
-      console.error("Camera error: ", err);
+      console.error("Camera error:", err);
       alert("Could not access camera");
       setShowCamera(false);
     }
@@ -62,7 +66,7 @@ export default function ImageAnalysis() {
     canvas.width = videoRef.current.videoWidth;
     canvas.height = videoRef.current.videoHeight;
     canvas.getContext('2d').drawImage(videoRef.current, 0, 0);
-    
+
     canvas.toBlob((blob) => {
       const file = new File([blob], 'capture.jpg', { type: 'image/jpeg' });
       handleImageUpload(file);
@@ -71,7 +75,7 @@ export default function ImageAnalysis() {
   };
 
   const stopCamera = () => {
-    if (videoRef.current.srcObject) {
+    if (videoRef.current && videoRef.current.srcObject) {
       videoRef.current.srcObject.getTracks().forEach(track => track.stop());
     }
     setShowCamera(false);
@@ -130,7 +134,6 @@ export default function ImageAnalysis() {
               <Upload className="mr-2" size={16} />
               Upload Image
             </button>
-            
             <button
               onClick={startCamera}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center"
@@ -139,7 +142,6 @@ export default function ImageAnalysis() {
               Take Photo
             </button>
           </div>
-
           <input
             type="file"
             ref={fileInputRef}
@@ -186,12 +188,10 @@ export default function ImageAnalysis() {
           <h3 className="text-xl font-semibold mb-4 text-green-800">
             Analysis Results
           </h3>
-          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h4 className="font-medium mb-2">Disease Detected:</h4>
               <p className="text-lg font-bold">{results.disease}</p>
-              
               <h4 className="font-medium mt-4 mb-2">Confidence Level:</h4>
               <div className="w-full bg-gray-200 rounded-full h-4">
                 <div 
@@ -203,11 +203,9 @@ export default function ImageAnalysis() {
                 {results.confidence}% confidence
               </p>
             </div>
-            
             <div>
               <h4 className="font-medium mb-2">Recommended Treatment:</h4>
               <p className="whitespace-pre-line">{results.treatment}</p>
-              
               {results.prevention && (
                 <>
                   <h4 className="font-medium mt-4 mb-2">Prevention Tips:</h4>
