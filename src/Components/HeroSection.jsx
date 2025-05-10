@@ -5,8 +5,8 @@ const HeroSection = () => {
   return (
     <div className="flex flex-col items-center mt-6 lg:mt-20">
         <h1 className="text-4x  sm:text-6xl lg:text-7xl text-center tracking-wide">
-        Empower your farming with  
-        <span className='bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text'> AI-driven precision</span>
+        Empower your fields with   
+        <span className='bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text'> AI-powered crop disease detection</span>
         </h1>
         <p className='mt-10 text-lg text-center text-neutral-500 max-w-4xl '>
         Leverage advanced AI technology to accurately predict crop diseases before they spread. Enhance your farming efficiency, reduce losses, and ensure healthier yields with our intelligent disease prediction system.
